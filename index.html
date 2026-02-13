@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lucs Store | UA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --black: #1a1a1a; --gray: #f5f5f5; --text-gray: #666; }
+        body { font-family: 'Inter', sans-serif; margin: 0; background: #fff; color: var(--black); overflow-x: hidden; }
+        
+        /* HEADER */
+        header { display: flex; justify-content: space-between; align-items: center; padding: 15px 5%; border-bottom: 1px solid #eee; position: sticky; top: 0; background: #fff; z-index: 1000; }
+        .logo { font-size: 22px; font-weight: 700; letter-spacing: 3px; cursor: pointer; }
+        
+        .nav-right { display: flex; align-items: center; gap: 20px; }
+        .lang-select { border: none; font-family: inherit; cursor: pointer; font-size: 14px; outline: none; }
+        
+        .cart-icon { position: relative; cursor: pointer; }
+        .cart-count { position: absolute; top: -8px; right: -10px; background: var(--black); color: white; font-size: 10px; padding: 2px 6px; border-radius: 50%; }
+
+        /* HERO SECTION */
+        .hero-section { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; height: 75vh; }
+        .hero-card { position: relative; overflow: hidden; cursor: pointer; }
+        .hero-card img { width: 100%; height: 100%; object-fit: cover; transition: 0.8s; }
+        .hero-card:hover img { transform: scale(1.03); }
+        .hero-label { position: absolute; top: 40px; left: 40px; }
+        .hero-label h2 { font-size: 30px; margin-bottom: 15px; text-transform: uppercase; }
+        .btn-black { background: var(--black); color: white; border: none; padding: 12px 24px; font-size: 12px; font-weight: 600; cursor: pointer; text-transform: uppercase; }
+
+        /* SHOP GRID */
+        .container { padding: 60px 5%; }
+        .shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 40px 20px; }
+        .product-card { position: relative; cursor: pointer; }
+        .img-box { background: var(--gray); aspect-ratio: 3/4; overflow: hidden; margin-bottom: 15px; }
+        .img-box img { width: 100%; height: 100%; object-fit: cover; }
+        .product-info h3 { font-size: 15px; font-weight: 400; margin: 0; }
+        .product-price { font-weight: 700; font-size: 16px; margin-top: 5px; }
+        
+        /* CART DRAWER */
+        #cart-drawer { position: fixed; right: -400px; top: 0; width: 350px; height: 100%; background: white; box-shadow: -5px 0 15px rgba(0,0,0,0.1); z-index: 2000; transition: 0.4s; padding: 30px; box-sizing: border-box; }
+        #cart-drawer.active { right: 0; }
+        .cart-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 20px; }
+        .close-cart { cursor: pointer; font-size: 20px; }
+
+        @media (max-width: 768px) { .hero-section { grid-template-columns: 1fr; height: auto; } .hero-card { height: 50vh; } }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo" onclick="location.reload()">Lucs Store</div>
+    <div class="nav-right">
+        <select class="lang-select" onchange="changeLang(this.value)">
+            <option value="ua">🇺🇦 UKR</option>
+            <option value="en">🇺🇸 ENG</option>
+        </select>
+        <div class="cart-icon" onclick="toggleCart()">
+            🛒 <span class="cart-count" id="cart-count">0</span>
+        </div>
+    </div>
+</header>
+
+<div class="hero-section">
+    <div class="hero-card" onclick="filterBy('Чоловікам')">
+        <img src="https://images.unsplash.com/photo-1488161628813-244a2eb077ad?auto=format&fit=crop&w=800&q=80">
+        <div class="hero-label">
+            <h2 id="txt-male">Чоловікам</h2>
+            <button class="btn-black" id="btn-male">Дивитись</button>
+        </div>
+    </div>
+    <div class="hero-card" onclick="filterBy('Жінкам')">
+        <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=800&q=80">
+        <div class="hero-label">
+            <h2 id="txt-female">Жінкам</h2>
+            <button class="btn-black" id="btn-female">Дивитись</button>
+        </div>
+    </div>
+</div>
+
+<div class="container" id="shop">
+    <h2 id="main-title" style="text-align:center; margin-bottom:40px; text-transform:uppercase; letter-spacing:2px;">Нова колекція</h2>
+    <div class="shop-grid" id="grid"></div>
+</div>
+
+<div id="cart-drawer">
+    <div class="cart-header">
+        <h3 id="txt-cart-title">Кошик</h3>
+        <span class="close-cart" onclick="toggleCart()">✕</span>
+    </div>
+    <div id="cart-items"></div>
+    <hr>
+    <button class="btn-black" style="width:100%; margin-top:20px;" id="btn-checkout">Оформити замовлення</button>
+</div>
+
+<script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbxlDxFNIY5sMLN_M-18P92u5eKCTa2pjn-Nj0Ddj1Sa-95yA5sYyljuR7rShT1R97Cy/exec";
+    let products = [];
+    let cart = [];
+
+    // Тексти для мов
+    const langData = {
+        ua: { male: "Чоловікам", female: "Жінкам", btn: "Дивитись", title: "Нова колекція", cart: "Кошик", checkout: "Оформити" },
+        en: { male: "Men", female: "Women", btn: "Shop Now", title: "New Collection", cart: "Cart", checkout: "Checkout" }
+    };
+
+    async function fetchData() {
+        const res = await fetch(API_URL);
+        products = await res.json();
+        render(products);
+    }
+
+    function render(data) {
+        const grid = document.getElementById('grid');
+        grid.innerHTML = data.map(item => `
+            <div class="product-card" onclick="addToCart('${item.Назва}')">
+                <div class="img-box"><img src="${item['Фото URL']}"></div>
+                <div class="product-info">
+                    <h3>${item.Назва}</h3>
+                    <div class="product-price">${item.Ціна} грн</div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function filterBy(cat) {
+        const filtered = products.filter(p => p.Категорія === cat);
+        render(filtered);
+        document.getElementById('shop').scrollIntoView({behavior: 'smooth'});
+    }
+
+    function changeLang(lang) {
+        const d = langData[lang];
+        document.getElementById('txt-male').innerText = d.male;
+        document.getElementById('txt-female').innerText = d.female;
+        document.getElementById('btn-male').innerText = d.btn;
+        document.getElementById('btn-female').innerText = d.btn;
+        document.getElementById('main-title').innerText = d.title;
+        document.getElementById('txt-cart-title').innerText = d.cart;
+        document.getElementById('btn-checkout').innerText = d.checkout;
+    }
+
+    function toggleCart() {
+        document.getElementById('cart-drawer').classList.toggle('active');
+    }
+
+    function addToCart(name) {
+        cart.push(name);
+        document.getElementById('cart-count').innerText = cart.length;
+        alert("Додано у кошик: " + name);
+    }
+
+    fetchData();
+</script>
+
+</body>
+</html>
