@@ -6,52 +6,92 @@
     <title>Lucs Store | UA</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
-        :root { --black: #1a1a1a; --gray: #f5f5f5; --text-gray: #666; }
-        body { font-family: 'Inter', sans-serif; margin: 0; background: #fff; color: var(--black); overflow-x: hidden; }
+        :root { --black: #1a1a1a; --gray: #f5f5f5; --accent: #2ecc71; }
+        body { font-family: 'Inter', sans-serif; margin: 0; background: #fff; color: var(--black); }
         
         /* HEADER */
-        header { display: flex; justify-content: space-between; align-items: center; padding: 15px 5%; border-bottom: 1px solid #eee; position: sticky; top: 0; background: #fff; z-index: 1000; }
+        header { 
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 15px 5%; border-bottom: 1px solid #eee; 
+            position: sticky; top: 0; background: #fff; z-index: 1000; 
+        }
         .logo { font-size: 22px; font-weight: 700; letter-spacing: 3px; cursor: pointer; }
         
+        .search-container { flex-grow: 1; display: flex; justify-content: center; padding: 0 20px; }
+        .search-input { 
+            width: 100%; max-width: 300px; padding: 8px 15px; 
+            border: 1px solid #ddd; border-radius: 20px; outline: none; 
+        }
+
         .nav-right { display: flex; align-items: center; gap: 20px; }
-        .lang-select { border: none; font-family: inherit; cursor: pointer; font-size: 14px; outline: none; }
-        
-        .cart-icon { position: relative; cursor: pointer; }
-        .cart-count { position: absolute; top: -8px; right: -10px; background: var(--black); color: white; font-size: 10px; padding: 2px 6px; border-radius: 50%; }
+        .cart-icon { position: relative; cursor: pointer; font-size: 20px; }
+        .cart-count { 
+            position: absolute; top: -8px; right: -10px; background: var(--black); 
+            color: white; font-size: 10px; padding: 2px 6px; border-radius: 50%; 
+        }
+
+        /* FILTERS BAR */
+        .filters-bar { 
+            display: flex; justify-content: center; align-items: center; 
+            gap: 20px; padding: 20px 5%; background: var(--gray);
+        }
+        .price-filter { display: flex; align-items: center; gap: 10px; font-size: 14px; }
 
         /* HERO SECTION */
-        .hero-section { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; height: 75vh; }
+        .hero-section { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; height: 60vh; }
         .hero-card { position: relative; overflow: hidden; cursor: pointer; }
         .hero-card img { width: 100%; height: 100%; object-fit: cover; transition: 0.8s; }
-        .hero-card:hover img { transform: scale(1.03); }
-        .hero-label { position: absolute; top: 40px; left: 40px; }
-        .hero-label h2 { font-size: 30px; margin-bottom: 15px; text-transform: uppercase; }
-        .btn-black { background: var(--black); color: white; border: none; padding: 12px 24px; font-size: 12px; font-weight: 600; cursor: pointer; text-transform: uppercase; }
+        .hero-card:hover img { transform: scale(1.05); }
+        .hero-label { position: absolute; bottom: 30px; left: 30px; color: white; }
+        .hero-label h2 { font-size: 28px; text-transform: uppercase; margin-bottom: 10px; text-shadow: 0 2px 5px rgba(0,0,0,0.5); }
 
         /* SHOP GRID */
-        .container { padding: 60px 5%; }
-        .shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 40px 20px; }
-        .product-card { position: relative; cursor: pointer; }
-        .img-box { background: var(--gray); aspect-ratio: 3/4; overflow: hidden; margin-bottom: 15px; }
-        .img-box img { width: 100%; height: 100%; object-fit: cover; }
-        .product-info h3 { font-size: 15px; font-weight: 400; margin: 0; }
-        .product-price { font-weight: 700; font-size: 16px; margin-top: 5px; }
+        .container { padding: 40px 5%; }
+        .shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 30px; }
         
-        /* CART DRAWER */
-        #cart-drawer { position: fixed; right: -400px; top: 0; width: 350px; height: 100%; background: white; box-shadow: -5px 0 15px rgba(0,0,0,0.1); z-index: 2000; transition: 0.4s; padding: 30px; box-sizing: border-box; }
-        #cart-drawer.active { right: 0; }
-        .cart-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 20px; }
-        .close-cart { cursor: pointer; font-size: 20px; }
+        /* КАРТКА ТОВАРУ */
+        .product-card { 
+            background: white; border-radius: 8px; overflow: hidden; 
+            transition: 0.3s; border: 1px solid transparent; 
+        }
+        .product-card:hover { border-color: #eee; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .img-box { background: var(--gray); aspect-ratio: 3/4; overflow: hidden; position: relative; }
+        .img-box img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .product-info { padding: 15px; text-align: center; }
+        .product-info h3 { font-size: 14px; margin: 0 0 8px; font-weight: 500; height: 34px; overflow: hidden; }
+        .product-price { font-weight: 700; font-size: 17px; color: var(--black); margin-bottom: 12px; }
+        
+        .btn-buy { 
+            width: 100%; background: var(--black); color: white; border: none; 
+            padding: 10px; border-radius: 4px; cursor: pointer; font-weight: 600; 
+            transition: 0.2s; font-size: 12px; text-transform: uppercase;
+        }
+        .btn-buy:hover { background: #333; }
 
-        @media (max-width: 768px) { .hero-section { grid-template-columns: 1fr; height: auto; } .hero-card { height: 50vh; } }
+        /* CART DRAWER */
+        #cart-drawer { 
+            position: fixed; right: -400px; top: 0; width: 350px; height: 100%; 
+            background: white; box-shadow: -5px 0 15px rgba(0,0,0,0.1); 
+            z-index: 2000; transition: 0.4s; padding: 30px; 
+        }
+        #cart-drawer.active { right: 0; }
+
+        @media (max-width: 768px) {
+            .hero-section { grid-template-columns: 1fr; }
+            .filters-bar { flex-direction: column; }
+        }
     </style>
 </head>
 <body>
 
 <header>
     <div class="logo" onclick="location.reload()">Lucs Store</div>
+    <div class="search-container">
+        <input type="text" id="search-input" class="search-input" placeholder="Пошук..." oninput="applyFilters()">
+    </div>
     <div class="nav-right">
-        <select class="lang-select" onchange="changeLang(this.value)">
+        <select class="lang-select" id="lang-select" onchange="changeLang(this.value)">
             <option value="ua">🇺🇦 UKR</option>
             <option value="en">🇺🇸 ENG</option>
         </select>
@@ -61,93 +101,114 @@
     </div>
 </header>
 
-<div class="hero-section">
-    <div class="hero-card" onclick="filterBy('Чоловікам')">
-        <img src="https://images.unsplash.com/photo-1488161628813-244a2eb077ad?auto=format&fit=crop&w=800&q=80">
-        <div class="hero-label">
-            <h2 id="txt-male">Чоловікам</h2>
-            <button class="btn-black" id="btn-male">Дивитись</button>
-        </div>
+<div class="filters-bar">
+    <div class="price-filter">
+        <span>Ціна до:</span>
+        <input type="range" id="price-range" min="0" max="5000" step="100" value="5000" oninput="updatePriceLabel(this.value)">
+        <b id="price-limit">5000</b> грн
     </div>
-    <div class="hero-card" onclick="filterBy('Жінкам')">
+    <button class="btn-buy" style="width: auto; padding: 5px 15px;" onclick="resetFilters()">Скинути все</button>
+</div>
+
+<div class="hero-section">
+    <div class="hero-card" onclick="setCategory('Чоловікам')">
+        <img src="https://images.unsplash.com/photo-1490578474895-699cd4e2cf59?auto=format&fit=crop&w=800&q=80">
+        <div class="hero-label"><h2 id="txt-male">Чоловікам</h2></div>
+    </div>
+    <div class="hero-card" onclick="setCategory('Жінкам')">
         <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=800&q=80">
-        <div class="hero-label">
-            <h2 id="txt-female">Жінкам</h2>
-            <button class="btn-black" id="btn-female">Дивитись</button>
-        </div>
+        <div class="hero-label"><h2 id="txt-female">Жінкам</h2></div>
     </div>
 </div>
 
 <div class="container" id="shop">
-    <h2 id="main-title" style="text-align:center; margin-bottom:40px; text-transform:uppercase; letter-spacing:2px;">Нова колекція</h2>
+    <h2 id="main-title" style="text-align:center; margin-bottom:30px;">НОВА КОЛЕКЦІЯ</h2>
     <div class="shop-grid" id="grid"></div>
 </div>
 
 <div id="cart-drawer">
-    <div class="cart-header">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
         <h3 id="txt-cart-title">Кошик</h3>
-        <span class="close-cart" onclick="toggleCart()">✕</span>
+        <span style="cursor:pointer" onclick="toggleCart()">✕</span>
     </div>
-    <div id="cart-items"></div>
-    <hr>
-    <button class="btn-black" style="width:100%; margin-top:20px;" id="btn-checkout">Оформити замовлення</button>
+    <div id="cart-items" style="margin-top:20px;"></div>
 </div>
 
 <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbxlDxFNIY5sMLN_M-18P92u5eKCTa2pjn-Nj0Ddj1Sa-95yA5sYyljuR7rShT1R97Cy/exec";
     let products = [];
     let cart = [];
-
-    // Тексти для мов
-    const langData = {
-        ua: { male: "Чоловікам", female: "Жінкам", btn: "Дивитись", title: "Нова колекція", cart: "Кошик", checkout: "Оформити" },
-        en: { male: "Men", female: "Women", btn: "Shop Now", title: "New Collection", cart: "Cart", checkout: "Checkout" }
-    };
+    let currentCategory = null;
 
     async function fetchData() {
-        const res = await fetch(API_URL);
-        products = await res.json();
-        render(products);
+        try {
+            const res = await fetch(API_URL);
+            products = await res.json();
+            // Встановлюємо макс ціну динамічно
+            const maxPrice = Math.max(...products.map(p => p.Ціна));
+            document.getElementById('price-range').max = maxPrice;
+            document.getElementById('price-range').value = maxPrice;
+            document.getElementById('price-limit').innerText = maxPrice;
+            render(products);
+        } catch (e) { console.error("Помилка:", e); }
     }
 
     function render(data) {
         const grid = document.getElementById('grid');
         grid.innerHTML = data.map(item => `
-            <div class="product-card" onclick="addToCart('${item.Назва}')">
+            <div class="product-card">
                 <div class="img-box"><img src="${item['Фото URL']}"></div>
                 <div class="product-info">
                     <h3>${item.Назва}</h3>
                     <div class="product-price">${item.Ціна} грн</div>
+                    <button class="btn-buy" onclick="addToCart('${item.Назва}')">У кошик</button>
                 </div>
             </div>
         `).join('');
     }
 
-    function filterBy(cat) {
-        const filtered = products.filter(p => p.Категорія === cat);
-        render(filtered);
+    function updatePriceLabel(val) {
+        document.getElementById('price-limit').innerText = val;
+        applyFilters();
+    }
+
+    function setCategory(cat) {
+        currentCategory = cat;
+        applyFilters();
         document.getElementById('shop').scrollIntoView({behavior: 'smooth'});
     }
 
-    function changeLang(lang) {
-        const d = langData[lang];
-        document.getElementById('txt-male').innerText = d.male;
-        document.getElementById('txt-female').innerText = d.female;
-        document.getElementById('btn-male').innerText = d.btn;
-        document.getElementById('btn-female').innerText = d.btn;
-        document.getElementById('main-title').innerText = d.title;
-        document.getElementById('txt-cart-title').innerText = d.cart;
-        document.getElementById('btn-checkout').innerText = d.checkout;
+    function applyFilters() {
+        const searchQuery = document.getElementById('search-input').value.toLowerCase();
+        const maxPrice = parseFloat(document.getElementById('price-range').value);
+
+        const filtered = products.filter(p => {
+            const matchesSearch = p.Назва.toLowerCase().includes(searchQuery);
+            const matchesCategory = currentCategory ? p.Категорія === currentCategory : true;
+            const matchesPrice = p.Ціна <= maxPrice;
+            return matchesSearch && matchesCategory && matchesPrice;
+        });
+
+        render(filtered);
     }
 
-    function toggleCart() {
-        document.getElementById('cart-drawer').classList.toggle('active');
+    function resetFilters() {
+        currentCategory = null;
+        document.getElementById('search-input').value = '';
+        const max = document.getElementById('price-range').max;
+        document.getElementById('price-range').value = max;
+        document.getElementById('price-limit').innerText = max;
+        render(products);
     }
 
     function addToCart(name) {
         cart.push(name);
         document.getElementById('cart-count').innerText = cart.length;
-        alert("Додано у кошик: " + name);
+        alert("Додано: " + name);
+    }
+
+    function toggleCart() {
+        document.getElementById('cart-drawer').classList.toggle('active');
     }
 
     fetchData();
