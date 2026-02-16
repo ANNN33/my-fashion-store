@@ -6,8 +6,8 @@
     <title>Lucs Store | UA</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
-        :root { --black: #1a1a1a; --gray: #f8f8f8; --dark-gray: #666; --accent: #000; }
-        body { font-family: 'Inter', sans-serif; margin: 0; background: #fff; color: var(--black); }
+        :root { --black: #1a1a1a; --gray: #f8f8f8; --dark-gray: #666; }
+        body { font-family: 'Inter', sans-serif; margin: 0; background: #fff; color: var(--black); overflow-x: hidden; }
         
         /* HEADER */
         header { 
@@ -16,194 +16,209 @@
             position: sticky; top: 0; background: #fff; z-index: 1000;
         }
         .logo { font-size: 22px; font-weight: 700; letter-spacing: 3px; cursor: pointer; }
-        .search-input { flex-grow: 1; max-width: 300px; margin: 0 20px; padding: 10px; border: 1px solid #ddd; border-radius: 20px; }
+        .search-input { flex-grow: 1; max-width: 300px; margin: 0 20px; padding: 10px 15px; border: 1px solid #ddd; border-radius: 20px; outline: none; }
 
-        /* GRID */
-        .container { padding: 40px 5%; }
-        .shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 30px; }
-        .product-card { cursor: pointer; transition: 0.3s; }
-        .img-box { background: var(--gray); aspect-ratio: 3/4; overflow: hidden; border-radius: 8px; }
+        /* HERO SECTION (ТВОЇ РОЗДІЛИ) */
+        .hero-section { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; height: 70vh; }
+        .hero-card { position: relative; overflow: hidden; cursor: pointer; }
+        .hero-card img { width: 100%; height: 100%; object-fit: cover; transition: 0.8s; }
+        .hero-card:hover img { transform: scale(1.03); }
+        .hero-label { position: absolute; top: 40px; left: 40px; }
+        .hero-label h2 { font-size: 30px; margin-bottom: 15px; text-transform: uppercase; }
+        .btn-black { background: var(--black); color: white; border: none; padding: 12px 24px; font-size: 12px; font-weight: 600; cursor: pointer; text-transform: uppercase; }
+
+        /* SHOP GRID */
+        .container { padding: 60px 5%; }
+        .shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 40px 20px; }
+        .product-card { cursor: pointer; text-align: left; }
+        .img-box { background: var(--gray); aspect-ratio: 3/4; overflow: hidden; margin-bottom: 15px; border-radius: 4px; }
         .img-box img { width: 100%; height: 100%; object-fit: cover; }
+        .product-price { font-weight: 700; font-size: 18px; margin-top: 5px; }
 
-        /* MODAL (ДЕТАЛІ ТОВАРУ) */
+        /* MODAL (ВІКНО ТОВАРУ) */
         .modal-overlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(0,0,0,0.7); display: none; justify-content: center; align-items: center; z-index: 3000; 
+            background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 3000; 
         }
         .modal-content { 
-            background: white; width: 90%; max-width: 800px; max-height: 90vh; 
-            border-radius: 15px; display: grid; grid-template-columns: 1fr 1fr; overflow-y: auto; position: relative;
+            background: white; width: 90%; max-width: 900px; max-height: 90vh; 
+            border-radius: 8px; display: grid; grid-template-columns: 1fr 1fr; overflow: hidden; position: relative;
         }
         .modal-close { position: absolute; top: 20px; right: 20px; font-size: 24px; cursor: pointer; z-index: 10; }
-        .modal-info { padding: 40px; }
-        .size-btn { 
-            border: 1px solid #ddd; padding: 8px 15px; margin: 5px; cursor: pointer; background: white; 
-        }
+        .modal-info { padding: 40px; overflow-y: auto; display: flex; flex-direction: column; }
+        .size-btn { border: 1px solid #ddd; padding: 10px 15px; margin: 5px 5px 5px 0; cursor: pointer; background: white; transition: 0.2s; }
         .size-btn.active { background: black; color: white; border-color: black; }
 
         /* CART DRAWER */
         #cart-drawer { 
             position: fixed; right: -450px; top: 0; width: 400px; height: 100%; 
-            background: white; box-shadow: -5px 0 15px rgba(0,0,0,0.1); z-index: 2000; transition: 0.4s; padding: 30px; overflow-y: auto;
+            background: white; box-shadow: -10px 0 20px rgba(0,0,0,0.1); z-index: 2000; transition: 0.4s; padding: 30px; box-sizing: border-box; display: flex; flex-direction: column;
         }
         #cart-drawer.active { right: 0; }
         .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; font-size: 12px; margin-bottom: 5px; font-weight: 600; }
-        .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; }
+        .form-group label { display: block; font-size: 13px; margin-bottom: 5px; font-weight: 600; }
+        .form-group input, .form-group select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
 
-        .btn-main { 
-            width: 100%; background: black; color: white; border: none; padding: 15px; 
-            border-radius: 8px; cursor: pointer; font-weight: 600; text-transform: uppercase; margin-top: 10px;
+        @media (max-width: 768px) { 
+            .hero-section { grid-template-columns: 1fr; height: auto; } 
+            .hero-card { height: 50vh; }
+            .modal-content { grid-template-columns: 1fr; }
+            #cart-drawer { width: 100%; }
         }
-
-        @media (max-width: 768px) { .modal-content { grid-template-columns: 1fr; } #cart-drawer { width: 100%; } }
     </style>
 </head>
 <body>
 
 <header>
     <div class="logo" onclick="location.reload()">Lucs Store</div>
-    <input type="text" id="search" class="search-input" placeholder="Пошук..." oninput="filter()">
-    <div onclick="toggleCart()" style="cursor:pointer">🛒 <span id="count">0</span></div>
+    <input type="text" id="search-input" class="search-input" placeholder="Пошук товару..." oninput="filterProducts()">
+    <div class="nav-right">
+        <div style="cursor:pointer; position:relative;" onclick="toggleCart()">
+            🛒 <span id="cart-count" style="position:absolute; top:-8px; right:-10px; background:black; color:white; font-size:10px; padding:2px 6px; border-radius:50%;">0</span>
+        </div>
+    </div>
 </header>
 
-<div class="container">
+<div class="hero-section">
+    <div class="hero-card" onclick="setCategory('Чоловікам')">
+        <img src="https://images.unsplash.com/photo-1490578474895-699cd4e2cf59?auto=format&fit=crop&w=800">
+        <div class="hero-label">
+            <h2>Чоловікам</h2>
+            <button class="btn-black">Дивитись</button>
+        </div>
+    </div>
+    <div class="hero-card" onclick="setCategory('Жінкам')">
+        <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=800">
+        <div class="hero-label">
+            <h2>Жінкам</h2>
+            <button class="btn-black">Дивитись</button>
+        </div>
+    </div>
+</div>
+
+<div class="container" id="shop">
+    <h2 id="main-title" style="text-align:center; margin-bottom:40px; text-transform:uppercase;">Нова колекція</h2>
     <div class="shop-grid" id="grid"></div>
 </div>
 
 <div class="modal-overlay" id="modal">
     <div class="modal-content">
         <span class="modal-close" onclick="closeModal()">✕</span>
-        <div id="modal-img-container" style="background: var(--gray);">
-            <img id="modal-img" src="" style="width:100%; height:100%; object-fit:cover;">
-        </div>
+        <div style="background: var(--gray);"><img id="modal-img" src="" style="width:100%; height:100%; object-fit:cover;"></div>
         <div class="modal-info">
             <h2 id="modal-title"></h2>
-            <p id="modal-desc" style="color:var(--dark-gray); font-size:14px;"></p>
-            <p><b>Ціна: </b><span id="modal-price"></span> грн</p>
-            <div id="modal-sizes-container" style="margin: 20px 0;">
-                <p><small>Виберіть розмір:</small></p>
+            <p id="modal-desc" style="color:var(--dark-gray); margin-bottom:20px;"></p>
+            <p style="font-size:20px; font-weight:700;">Ціна: <span id="modal-price"></span> грн</p>
+            <div style="margin: 20px 0;">
+                <p><b>Виберіть розмір:</b></p>
                 <div id="modal-sizes"></div>
             </div>
-            <button class="btn-main" onclick="confirmAddToCart()">Додати у кошик</button>
+            <button class="btn-black" style="width:100%; padding:15px;" onclick="addToCart()">Додати у кошик</button>
         </div>
     </div>
 </div>
 
 <div id="cart-drawer">
-    <h3>Оформлення замовлення</h3>
-    <div id="cart-items" style="margin-bottom:20px;"></div>
+    <h3>Кошик</h3>
+    <div id="cart-items" style="flex-grow:1; overflow-y:auto; margin-bottom:20px;"></div>
     
     <div class="form-group">
-        <label>Ваш номер телефону</label>
-        <input type="tel" id="user-phone" placeholder="+380 00 000 00 00">
+        <label>Номер телефону</label>
+        <input type="tel" id="user-phone" placeholder="+380...">
     </div>
-    
     <div class="form-group">
         <label>Спосіб доставки</label>
         <select id="user-delivery">
-            <option value="nova_poshta">Нова Пошта</option>
-            <option value="ukr_poshta">Укрпошта</option>
-            <option value="samovyviz">Самовивіз</option>
+            <option value="Нова Пошта">Нова Пошта</option>
+            <option value="Укрпошта">Укрпошта</option>
+            <option value="Самовивіз">Самовивіз</option>
         </select>
     </div>
-
-    <div style="font-size:18px; font-weight:700; margin:20px 0;">Разом: <span id="total-sum">0</span> грн</div>
-    <button class="btn-main" onclick="checkout()">Замовити</button>
-    <button onclick="toggleCart()" style="background:none; border:none; width:100%; margin-top:10px; cursor:pointer;">Назад до покупок</button>
+    
+    <div style="font-size:18px; font-weight:700; margin-bottom:15px;">Разом: <span id="total-sum">0</span> грн</div>
+    <button class="btn-black" style="width:100%; padding:15px;" onclick="checkout()">Оформити замовлення</button>
 </div>
 
 <script>
     const API = "https://script.google.com/macros/s/AKfycbxlDxFNIY5sMLN_M-18P92u5eKCTa2pjn-Nj0Ddj1Sa-95yA5sYyljuR7rShT1R97Cy/exec";
-    let allProducts = [];
-    let cart = [];
-    let currentProduct = null;
-    let selectedSize = null;
+    let products = [], cart = [], currentProduct = null, selectedSize = null, currentCat = null;
 
     async function load() {
         const res = await fetch(API);
-        allProducts = await res.json();
-        render(allProducts);
+        products = await res.json();
+        render(products);
     }
 
     function render(data) {
         document.getElementById('grid').innerHTML = data.map(p => `
             <div class="product-card" onclick="openModal('${p.Назва}')">
                 <div class="img-box"><img src="${p['Фото URL']}"></div>
-                <h4>${p.Назва}</h4>
-                <b>${p.Ціна} грн</b>
+                <h3>${p.Назва}</h3>
+                <div class="product-price">${p.Ціна} грн</div>
             </div>
         `).join('');
     }
 
     function openModal(name) {
-        currentProduct = allProducts.find(p => p.Назва === name);
+        currentProduct = products.find(p => p.Назва === name);
         document.getElementById('modal-title').innerText = currentProduct.Назва;
-        document.getElementById('modal-desc').innerText = currentProduct.Опис || "Опис відсутній";
+        document.getElementById('modal-desc').innerText = currentProduct.Опис || "Опис товару незабаром.";
         document.getElementById('modal-price').innerText = currentProduct.Ціна;
         document.getElementById('modal-img').src = currentProduct['Фото URL'];
         
-        // Розміри
         const sizes = currentProduct.Розміри ? currentProduct.Розміри.split(',') : [];
-        document.getElementById('modal-sizes').innerHTML = sizes.map(s => `
-            <button class="size-btn" onclick="selectSize(this, '${s.trim()}')">${s.trim()}</button>
-        `).join('');
-        
+        document.getElementById('modal-sizes').innerHTML = sizes.map(s => `<button class="size-btn" onclick="selectSize(this, '${s.trim()}')">${s.trim()}</button>`).join('');
         selectedSize = null;
         document.getElementById('modal').style.display = 'flex';
     }
 
     function closeModal() { document.getElementById('modal').style.display = 'none'; }
-
-    function selectSize(btn, size) {
+    function selectSize(btn, s) { 
         document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        selectedSize = size;
+        btn.classList.add('active'); selectedSize = s; 
     }
 
-    function confirmAddToCart() {
-        if (!selectedSize && currentProduct.Розміри) {
-            alert("Будь ласка, виберіть розмір!");
-            return;
-        }
-        cart.push({ ...currentProduct, selectedSize });
-        updateCartUI();
-        closeModal();
-        toggleCart();
+    function addToCart() {
+        if (!selectedSize && currentProduct.Розміри) return alert("Виберіть розмір!");
+        cart.push({...currentProduct, size: selectedSize});
+        updateCart(); closeModal(); toggleCart(true);
     }
 
-    function updateCartUI() {
-        document.getElementById('count').innerText = cart.length;
+    function updateCart() {
+        document.getElementById('cart-count').innerText = cart.length;
         document.getElementById('cart-items').innerHTML = cart.map((item, i) => `
-            <div style="border-bottom:1px solid #eee; padding:10px 0;">
-                <div><b>${item.Назва}</b> (р-р: ${item.selectedSize || '-'})</div>
-                <div>${item.Ціна} грн <span onclick="remove(${i})" style="color:red; cursor:pointer; float:right;">Видалити</span></div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:10px; border-bottom:1px solid #eee; padding-bottom:5px;">
+                <div><b>${item.Назва}</b><br><small>Розмір: ${item.size || '-'}</small></div>
+                <div>${item.Ціна} грн <span onclick="remove(${i})" style="color:red; cursor:pointer; margin-left:10px;">✕</span></div>
             </div>
         `).join('');
-        const total = cart.reduce((sum, item) => sum + item.Ціна, 0);
-        document.getElementById('total-sum').innerText = total;
+        document.getElementById('total-sum').innerText = cart.reduce((s, i) => s + i.Ціна, 0);
     }
 
-    function remove(i) { cart.splice(i,1); updateCartUI(); }
-    function toggleCart() { document.getElementById('cart-drawer').classList.toggle('active'); }
+    function remove(i) { cart.splice(i, 1); updateCart(); }
+    function toggleCart(show) { document.getElementById('cart-drawer').classList.toggle('active', show); }
+
+    function setCategory(cat) {
+        currentCat = cat;
+        const filtered = products.filter(p => p.Категорія.toLowerCase() === cat.toLowerCase());
+        render(filtered);
+        document.getElementById('shop').scrollIntoView({behavior: 'smooth'});
+    }
+
+    function filterProducts() {
+        const query = document.getElementById('search-input').value.toLowerCase();
+        const filtered = products.filter(p => p.Назва.toLowerCase().includes(query));
+        render(filtered);
+    }
 
     function checkout() {
         const phone = document.getElementById('user-phone').value;
-        const delivery = document.getElementById('user-delivery').value;
-        if (!phone) { alert("Введіть номер телефону!"); return; }
-        if (cart.length === 0) { alert("Кошик порожній!"); return; }
-        
-        alert(`Дякуємо! Замовлення на номер ${phone} прийнято. Доставка: ${delivery}`);
-        cart = [];
-        updateCartUI();
-        toggleCart();
+        if (!phone || cart.length === 0) return alert("Заповніть номер та додайте товари!");
+        alert("Дякуємо! Ваше замовлення прийнято. Ми зв'яжемося з вами.");
+        cart = []; updateCart(); toggleCart(false);
     }
 
     load();
 </script>
-
 </body>
 </html>
-
-
-
